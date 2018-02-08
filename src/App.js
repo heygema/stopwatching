@@ -37,7 +37,7 @@ class App extends Component<Props, State> {
   };
 
   _updateTime = () => {
-    this._timeout = setTimeout(() => this._updateTime(), 100);
+    this._timeout = setTimeout(() => this._updateTime(), 900);
     let currentTime = Date.now() - this.state.currentTime;
     this.setState(() => {
       return {currentTime};
@@ -130,6 +130,7 @@ class App extends Component<Props, State> {
               </Text>
             </View>
           </TouchableOpacity>
+          <Text style={{color: '#fff', fontSize: 15}}>Made in China.</Text>
         </View>
       </View>
     );
