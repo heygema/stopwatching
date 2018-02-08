@@ -10,9 +10,9 @@ type State = {
   currentTime: number,
   fontLoaded: boolean,
   isStart: boolean,
-  m: string,
-  s: string,
-  ms: string,
+  min: string,
+  sec: string,
+  milsec: string,
 };
 type Props = {};
 
@@ -21,9 +21,9 @@ class App extends Component<Props, State> {
     currentTime: Date.now(),
     fontLoaded: false,
     isStart: false,
-    m: '',
-    s: '',
-    ms: '',
+    min: '',
+    sec: '',
+    milsec: '',
   };
 
   _timeout: ?mixed = null;
@@ -70,7 +70,7 @@ class App extends Component<Props, State> {
   }
 
   render() {
-    let {fontLoaded, m, s, ms} = this.state;
+    let {fontLoaded, min, sec, milsec} = this.state;
 
     return (
       <View style={s.container}>
