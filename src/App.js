@@ -18,12 +18,13 @@ type Props = {};
 
 class App extends Component<Props, State> {
   state = {
-    currentTime: Date.now(),
+    currentTime: 0,
     fontLoaded: false,
     isStart: false,
     min: '',
     sec: '',
     milsec: '',
+    result: '',
   };
 
   _timeout: ?mixed = null;
@@ -37,11 +38,18 @@ class App extends Component<Props, State> {
   };
 
   _updateTime = () => {
-    this._timeout = setTimeout(() => this._updateTime(), 30);
-    this.setState({
-      currentTime: Date.now() - this.state.currentTime,
+    this._timeout = setTimeout(() => this._updateTime(), 100);
+    this.setState((state) => {
+      return {currentTime: Date.now() - this.state.currentTime};
     });
-    console.log(this.state.currentTime);
+    let t = new Date(this.state.currentTime);
+    let min = ('0' + t.getMinutes()).slice(-2);
+    let sec = ('0' + t.getSeconds()).slice(-2);
+    let milsec = ('0' + t.getMilliseconds()).slice(-2);
+    let result = min + ':' + sec + ':' + milsec;
+    this.setState((state) => {
+      return {min, sec, milsec, result};
+    });
   };
 
   _checkCondition = () => {
@@ -70,8 +78,9 @@ class App extends Component<Props, State> {
   }
 
   render() {
-    let {fontLoaded, min, sec, milsec} = this.state;
-
+    let {currentTime, fontLoaded, min, sec, milsec, result} = this.state;
+    // let formattedTime = min + ':' + sec + ':' + milsec;
+    // {currentTime > 0 ? {result} : '00:00:00'}
     return (
       <View style={s.container}>
         <StatusBar barStyle="light-content" />
@@ -93,10 +102,10 @@ class App extends Component<Props, State> {
           <Text
             style={[
               s.timeStyle,
-              {fontFamily: fontLoaded ? 'permanent-marker' : null},
+              {fontFamily: fontLoaded ? 'montserrat' : null},
             ]}
           >
-            00:00:00
+            {min}:{sec}:{milsec}
           </Text>
           <TouchableOpacity onPress={this._start}>
             <View style={[s.button, s.buttonCircle, {margin: 10}]}>
