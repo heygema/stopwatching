@@ -7,9 +7,12 @@ import PM from './styles/fonts/PM.ttf';
 import MS from './styles/fonts/Montserrat-Light.ttf';
 
 type State = {
-  currentTime: ?any,
+  currentTime: number,
   fontLoaded: boolean,
   isStart: boolean,
+  m: string,
+  s: string,
+  ms: string,
 };
 type Props = {};
 
@@ -18,6 +21,9 @@ class App extends Component<Props, State> {
     currentTime: Date.now(),
     fontLoaded: false,
     isStart: false,
+    m: '',
+    s: '',
+    ms: '',
   };
 
   _timeout: ?mixed = null;
@@ -30,26 +36,41 @@ class App extends Component<Props, State> {
     this.setState({fontLoaded: true});
   };
 
+  _updateTime = () => {
+    this._timeout = setTimeout(() => this._updateTime(), 30);
+    this.setState({
+      currentTime: Date.now() - this.state.currentTime,
+    });
+    console.log(this.state.currentTime);
+  };
+
+  _checkCondition = () => {
+    let {isStart} = this.state;
+    if (isStart) {
+      this._updateTime();
+    } else if (!isStart) {
+      this._stop();
+    }
+  };
+
   _start = () => {
     let {isStart} = this.state;
-    this._timeout = setTimeout(
-      () => this.setState({currentTime: Date.now() - this.state.currentTime}),
-      30,
-    );
-    console.log(this.state.currentTime);
     this.setState({
       isStart: !isStart,
     });
+    this._checkCondition();
   };
 
-  _stop = () => {};
+  _stop = () => {
+    clearTimeout(this._timeout);
+  };
 
   componentDidMount() {
     this._loadFont();
   }
 
   render() {
-    let {fontLoaded} = this.state;
+    let {fontLoaded, m, s, ms} = this.state;
 
     return (
       <View style={s.container}>
