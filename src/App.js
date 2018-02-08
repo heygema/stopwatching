@@ -38,8 +38,9 @@ class App extends Component<Props, State> {
 
   _updateTime = () => {
     this._timeout = setTimeout(() => this._updateTime(), 100);
+    let currentTime = Date.now() - this.state.currentTime;
     this.setState(() => {
-      return {currentTime: Date.now() - this.state.currentTime};
+      return {currentTime};
     });
     let t = new Date(this.state.currentTime);
     let min = ('0' + t.getMinutes()).slice(-2);
