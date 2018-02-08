@@ -24,7 +24,6 @@ class App extends Component<Props, State> {
     min: '',
     sec: '',
     milsec: '',
-    result: '',
   };
 
   _timeout: ?mixed = null;
@@ -39,16 +38,15 @@ class App extends Component<Props, State> {
 
   _updateTime = () => {
     this._timeout = setTimeout(() => this._updateTime(), 100);
-    this.setState((state) => {
+    this.setState(() => {
       return {currentTime: Date.now() - this.state.currentTime};
     });
     let t = new Date(this.state.currentTime);
     let min = ('0' + t.getMinutes()).slice(-2);
     let sec = ('0' + t.getSeconds()).slice(-2);
     let milsec = ('0' + t.getMilliseconds()).slice(-2);
-    let result = min + ':' + sec + ':' + milsec;
-    this.setState((state) => {
-      return {min, sec, milsec, result};
+    this.setState(() => {
+      return {min, sec, milsec};
     });
   };
 
@@ -78,7 +76,7 @@ class App extends Component<Props, State> {
   }
 
   render() {
-    let {currentTime, fontLoaded, min, sec, milsec, result} = this.state;
+    let {currentTime, fontLoaded, min, sec, milsec} = this.state;
     // let formattedTime = min + ':' + sec + ':' + milsec;
     // {currentTime > 0 ? {result} : '00:00:00'}
     return (
@@ -99,14 +97,25 @@ class App extends Component<Props, State> {
           <View style={s.oneFlexed} />
         </View>
         <View style={s.contentBody}>
-          <Text
-            style={[
-              s.timeStyle,
-              {fontFamily: fontLoaded ? 'montserrat' : null},
-            ]}
-          >
-            {min}:{sec}:{milsec}
-          </Text>
+          {currentTime > 0 ? (
+            <Text
+              style={[
+                s.timeStyle,
+                {fontFamily: fontLoaded ? 'montserrat' : null},
+              ]}
+            >
+              {min}:{sec}:{milsec}
+            </Text>
+          ) : (
+            <Text
+              style={[
+                s.timeStyle,
+                {fontFamily: fontLoaded ? 'montserrat' : null},
+              ]}
+            >
+              00:00:00
+            </Text>
+          )}
           <TouchableOpacity onPress={this._start}>
             <View style={[s.button, s.buttonCircle, {margin: 10}]}>
               <Text
