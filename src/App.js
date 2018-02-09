@@ -64,6 +64,17 @@ class App extends Component<Props, State> {
     });
   };
 
+  _getConcatedTimeFmt = () => {
+    let {currentTime, startTime} = this.state;
+    let elapsed = currentTime - startTime;
+    let t = new Date(elapsed);
+    let min = ('0' + t.getMinutes()).slice(-2);
+    let sec = ('0' + t.getSeconds()).slice(-2);
+    let milsec = ('0' + t.getMilliseconds()).slice(-2);
+    let concated = min + ':' + sec + ':' + milsec;
+    return concated;
+  };
+
   _checkLap = () => {
     // TODO: create for check lap
     let {currentTime, startTime, laps} = this.state;
