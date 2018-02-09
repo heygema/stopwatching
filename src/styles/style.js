@@ -27,14 +27,14 @@ let s = StyleSheet.create({
   },
   timeStyle: {
     color: '#fff',
-    fontSize: 50,
+    fontSize: 70,
     fontWeight: 'bold',
   },
   contentBody: {
     flex: 17,
     backgroundColor: '#9B59B6',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
   },
   button: {
     backgroundColor: '#F7CA18',

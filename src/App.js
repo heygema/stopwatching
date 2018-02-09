@@ -15,6 +15,7 @@ type State = {
   min: string,
   sec: string,
   milsec: string,
+  laps: Array<string>,
 };
 type Props = {};
 
@@ -27,6 +28,7 @@ class App extends Component<Props, State> {
     min: '',
     sec: '',
     milsec: '',
+    laps: [],
   };
 
   _timeout: ?mixed = null;
@@ -45,7 +47,7 @@ class App extends Component<Props, State> {
   };
 
   _updateTime = () => {
-    this.setState((state) => {
+    this.setState(() => {
       return {currentTime: Date.now()};
     });
   };
