@@ -1,12 +1,14 @@
 // @flow
 import React, {Component} from 'react';
-import {View, Text, StatusBar, TouchableOpacity} from 'react-native';
+import {View, Text, StatusBar, TouchableOpacity, FlatList} from 'react-native';
 import s from './styles/style';
 import {Font} from 'expo';
 import PM from './styles/fonts/PM.ttf';
 import MS from './styles/fonts/Montserrat-Light.ttf';
+import OSans from './styles/fonts/OpenSans-Regular.ttf';
 
 type State = {
+  startTime: number,
   currentTime: number,
   fontLoaded: boolean,
   isStart: boolean,
@@ -18,6 +20,7 @@ type Props = {};
 
 class App extends Component<Props, State> {
   state = {
+    startTime: 0,
     currentTime: 0,
     fontLoaded: false,
     isStart: false,
@@ -32,43 +35,39 @@ class App extends Component<Props, State> {
     await Font.loadAsync({
       'permanent-marker': PM,
       montserrat: MS,
+      'open-sans': OSans,
     });
     this.setState({fontLoaded: true});
   };
 
-  _updateTime = () => {
-    this._timeout = setTimeout(() => this._updateTime(), 900);
-    let currentTime = Date.now() - this.state.currentTime;
-    this.setState(() => {
-      return {currentTime};
-    });
-    let t = new Date(this.state.currentTime);
-    let min = ('0' + t.getMinutes()).slice(-2);
-    let sec = ('0' + t.getSeconds()).slice(-2);
-    let milsec = ('0' + t.getMilliseconds()).slice(-2);
-    this.setState(() => {
-      return {min, sec, milsec};
-    });
+  _setTime = () => {
+    this._timeout = setTimeout(() => this._updateTime(), 50);
   };
 
-  _checkCondition = () => {
-    let {isStart} = this.state;
-    if (isStart) {
-      this._updateTime();
-    } else if (!isStart) {
-      this._stop();
-    }
+  _updateTime = () => {
+    this.setState((state) => {
+      return {currentTime: Date.now()};
+    });
   };
 
   _start = () => {
-    let {isStart} = this.state;
+    console.log('started ....');
     this.setState({
-      isStart: !isStart,
+      startTime: Date.now(),
+      currentTime: Date.now(),
+      isStart: true,
     });
-    this._checkCondition();
+  };
+
+  _pause = () => {
+    // TODO: implement pause
   };
 
   _stop = () => {
+    console.log('stop');
+    this.setState({
+      isStart: false,
+    });
     clearTimeout(this._timeout);
   };
 
@@ -77,9 +76,17 @@ class App extends Component<Props, State> {
   }
 
   render() {
-    let {currentTime, fontLoaded, min, sec, milsec} = this.state;
-    // let formattedTime = min + ':' + sec + ':' + milsec;
-    // {currentTime > 0 ? {result} : '00:00:00'}
+    let {currentTime, startTime, isStart, fontLoaded} = this.state;
+    let elapsed = currentTime - startTime;
+    let t = new Date(elapsed);
+    let min = ('0' + t.getMinutes()).slice(-2);
+    let sec = ('0' + t.getSeconds()).slice(-2);
+    let milsec = ('0' + t.getMilliseconds()).slice(-2);
+
+    if (isStart) {
+      this._setTime();
+    }
+
     return (
       <View style={s.container}>
         <StatusBar barStyle="light-content" />
@@ -102,7 +109,7 @@ class App extends Component<Props, State> {
             <Text
               style={[
                 s.timeStyle,
-                {fontFamily: fontLoaded ? 'montserrat' : null},
+                {fontFamily: fontLoaded ? 'open-sans' : null},
               ]}
             >
               {min}:{sec}:{milsec}
@@ -111,25 +118,41 @@ class App extends Component<Props, State> {
             <Text
               style={[
                 s.timeStyle,
-                {fontFamily: fontLoaded ? 'montserrat' : null},
+                {fontFamily: fontLoaded ? 'open-sans' : null},
               ]}
             >
               00:00:00
             </Text>
           )}
-          <TouchableOpacity onPress={this._start}>
-            <View style={[s.button, s.buttonCircle, {margin: 10}]}>
-              <Text
-                style={[
-                  s.titleText,
-                  {fontSize: 20},
-                  {fontFamily: fontLoaded ? 'permanent-marker' : null},
-                ]}
-              >
-                {this.state.isStart ? 'STOP' : 'START'}
-              </Text>
-            </View>
-          </TouchableOpacity>
+          {isStart ? (
+            <TouchableOpacity onPress={this._stop}>
+              <View style={[s.button, s.buttonCircle, {margin: 10}]}>
+                <Text
+                  style={[
+                    s.titleText,
+                    {fontSize: 20},
+                    {fontFamily: fontLoaded ? 'permanent-marker' : null},
+                  ]}
+                >
+                  {isStart ? 'STOP' : 'START'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={this._start}>
+              <View style={[s.button, s.buttonCircle, {margin: 10}]}>
+                <Text
+                  style={[
+                    s.titleText,
+                    {fontSize: 20},
+                    {fontFamily: fontLoaded ? 'permanent-marker' : null},
+                  ]}
+                >
+                  {isStart ? 'STOP' : 'START'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
           <Text style={{color: '#fff', fontSize: 15}}>Made in China.</Text>
         </View>
       </View>
