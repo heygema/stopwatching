@@ -101,6 +101,10 @@ class App extends Component<Props, State> {
   _pause = () => {
     // TODO: implement pause
     console.log('pause');
+    this.setState({
+      isPaused: true,
+      currentTime: Date.now(),
+    });
     // this.setState({
     //   isPaused: true,
     // });
