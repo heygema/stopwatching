@@ -1,5 +1,4 @@
 import {StyleSheet} from 'react-native';
-import {Font} from 'expo';
 
 // type SType : StyleSheet.Styles;
 
@@ -21,7 +20,7 @@ let s = StyleSheet.create({
   },
   titleText: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: 'bold',
     // fontFamily: 'permanent-marker',
   },
