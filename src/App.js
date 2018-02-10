@@ -13,6 +13,7 @@ import {Font, Audio} from 'expo';
 import PM from './styles/fonts/PM.ttf';
 import MS from './styles/fonts/Montserrat-Light.ttf';
 import OSans from './styles/fonts/OpenSans-Regular.ttf';
+import uuidv1 from 'uuid/v1';
 
 type State = {
   startTime: number,
@@ -41,6 +42,8 @@ class App extends Component<Props, State> {
   };
 
   _timeout: ?mixed = null;
+
+  _keyExtractor = (item, index) => item.id;
 
   _handlePlaySoundAsync = async () => {
     await Audio.setIsEnabledAsync(true);
@@ -83,20 +86,25 @@ class App extends Component<Props, State> {
   };
 
   _checkLap = () => {
-    // TODO: create for check lap
     let {laps} = this.state;
     let time = this._getConcatedTimeFmt();
-    let key = Math.random();
+    let id = uuidv1();
     this.setState({
       laps: [
         ...laps,
         {
-          key,
+          id,
           time,
         },
       ],
     });
     console.log(laps);
+  };
+
+  _restartLap = () => {
+    this.setState({
+      laps: [],
+    });
   };
 
   _start = () => {
@@ -179,33 +187,37 @@ class App extends Component<Props, State> {
           <View style={s.oneFlexed} />
         </View>
         <View style={s.contentBody}>
-          {currentTime > 0 ? (
-            <Text
-              style={[
-                s.timeStyle,
-                {fontFamily: fontLoaded ? 'open-sans' : null},
-              ]}
-            >
-              {
-                // {min}:{sec}:{milsec}
-                time
-              }
-            </Text>
-          ) : (
-            <Text
-              style={[
-                s.timeStyle,
-                {fontFamily: fontLoaded ? 'open-sans' : null},
-              ]}
-            >
-              00:00:00
-            </Text>
-          )}
+          <View style={{flex: 2, justifyContent: 'flex-end'}}>
+            {currentTime > 0 ? (
+              <Text
+                style={[
+                  s.timeStyle,
+                  {fontFamily: fontLoaded ? 'open-sans' : null},
+                ]}
+              >
+                {
+                  // {min}:{sec}:{milsec}
+                  time
+                }
+              </Text>
+            ) : (
+              <Text
+                style={[
+                  s.timeStyle,
+                  {fontFamily: fontLoaded ? 'open-sans' : null},
+                ]}
+              >
+                00:00:00
+              </Text>
+            )}
+          </View>
           {
             // view of 3 items for button
           }
-          <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity onPress={this._checkLap}>
+          <View style={{flex: 1, flexDirection: 'row'}}>
+            <TouchableOpacity
+              onPress={isStart ? this._checkLap : this._restartLap}
+            >
               <View
                 style={[
                   s.button,
@@ -222,7 +234,7 @@ class App extends Component<Props, State> {
                     },
                   ]}
                 >
-                  LAP
+                  {isStart ? 'LAP' : 'RESTART'}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -256,11 +268,7 @@ class App extends Component<Props, State> {
               </TouchableOpacity>
             )}
             <TouchableOpacity
-              onPress={
-                this.state.isPaused
-                  ? () => this._unpause()
-                  : () => this._pause()
-              }
+              onPress={this.state.isPaused ? this._unpause : this._pause}
             >
               <View
                 style={[
@@ -281,10 +289,19 @@ class App extends Component<Props, State> {
               </View>
             </TouchableOpacity>
           </View>
-          <View style={{flexDirection: 'column'}}>
+          <View
+            style={{justifyContent: 'center', flex: 2, flexDirection: 'column'}}
+          >
             <FlatList
               data={this.state.laps}
-              renderItem={({item}) => <Text>{item.time}</Text>}
+              renderItem={({item}) => (
+                <View>
+                  <Text style={{color: '#fff'}}>
+                    Lap {this.state.laps.indexOf(item) + 1} : {item.time}
+                  </Text>
+                </View>
+              )}
+              keyExtractor={this._keyExtractor}
             />
           </View>
           <Text style={{color: '#fff', fontSize: 15}}>Made in China.</Text>
