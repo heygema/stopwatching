@@ -297,7 +297,13 @@ class App extends Component<Props, State> {
               data={this.state.laps}
               renderItem={({item}) => (
                 <View>
-                  <Text style={{color: '#fff'}}>
+                  <Text
+                    style={{
+                      fontFamily: fontLoaded ? 'open-sans' : null,
+                      fontWeight: 'bold',
+                      color: '#fff',
+                    }}
+                  >
                     Lap {this.state.laps.indexOf(item) + 1} : {item.time}
                   </Text>
                 </View>
