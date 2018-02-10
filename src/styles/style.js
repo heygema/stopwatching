@@ -11,6 +11,7 @@ let s = StyleSheet.create({
     flex: 2,
     backgroundColor: '#663399',
     flexDirection: 'row',
+    elevation: 3,
   },
   oneFlexed: {
     flex: 1,

@@ -1,6 +1,13 @@
 // @flow
 import React, {Component} from 'react';
-import {View, Text, StatusBar, TouchableOpacity, FlatList} from 'react-native';
+import {
+  View,
+  Text,
+  StatusBar,
+  TouchableOpacity,
+  ScrollView,
+  FlatList,
+} from 'react-native';
 import s from './styles/style';
 import {Font, Audio} from 'expo';
 import PM from './styles/fonts/PM.ttf';
@@ -16,7 +23,7 @@ type State = {
   min: string,
   sec: string,
   milsec: string,
-  laps: Array<string>,
+  laps: Array<Object>,
 };
 type Props = {};
 
@@ -77,16 +84,19 @@ class App extends Component<Props, State> {
 
   _checkLap = () => {
     // TODO: create for check lap
-    let {currentTime, startTime, laps} = this.state;
-    let elapsed = currentTime - startTime;
-    let t = new Date(elapsed);
-    let min = ('0' + t.getMinutes()).slice(-2);
-    let sec = ('0' + t.getSeconds()).slice(-2);
-    let milsec = ('0' + t.getMilliseconds()).slice(-2);
-    let concated = min + ':' + sec + ':' + milsec;
+    let {laps} = this.state;
+    let time = this._getConcatedTimeFmt();
+    let key = Math.random();
     this.setState({
-      laps: [...laps, concated],
+      laps: [
+        ...laps,
+        {
+          key,
+          time,
+        },
+      ],
     });
+    console.log(laps);
   };
 
   _start = () => {
@@ -102,9 +112,11 @@ class App extends Component<Props, State> {
     // TODO: implement pause
     console.log('pause');
     this.setState({
+      isStart: false,
       isPaused: true,
       currentTime: Date.now(),
     });
+    clearTimeout(this._timeout);
     // this.setState({
     //   isPaused: true,
     // });
@@ -116,9 +128,10 @@ class App extends Component<Props, State> {
   _unpause = () => {
     //  TODO: implement unpaused
     console.log('unpause');
-    // this.setState({
-    //   isPaused: false,
-    // });
+    this.setState({
+      isPaused: false,
+      isStart: true,
+    });
     // this._setTime();
   };
 
@@ -137,16 +150,16 @@ class App extends Component<Props, State> {
   }
 
   render() {
-    let {currentTime, startTime, isStart, fontLoaded} = this.state;
-    let elapsed = currentTime - startTime;
-    let t = new Date(elapsed);
-    let min = ('0' + t.getMinutes()).slice(-2);
-    let sec = ('0' + t.getSeconds()).slice(-2);
-    let milsec = ('0' + t.getMilliseconds()).slice(-2);
+    let {currentTime, isStart, isPaused, fontLoaded} = this.state;
+
+    let time = this._getConcatedTimeFmt();
 
     if (isStart) {
       this._setTime();
     }
+    // if (isPaused) {
+    //   clearTimeout(this._timeout);
+    // }
 
     return (
       <View style={s.container}>
@@ -173,7 +186,10 @@ class App extends Component<Props, State> {
                 {fontFamily: fontLoaded ? 'open-sans' : null},
               ]}
             >
-              {min}:{sec}:{milsec}
+              {
+                // {min}:{sec}:{milsec}
+                time
+              }
             </Text>
           ) : (
             <Text
@@ -189,7 +205,7 @@ class App extends Component<Props, State> {
             // view of 3 items for button
           }
           <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={this._checkLap}>
               <View
                 style={[
                   s.button,
@@ -264,6 +280,12 @@ class App extends Component<Props, State> {
                 </Text>
               </View>
             </TouchableOpacity>
+          </View>
+          <View style={{flexDirection: 'column'}}>
+            <FlatList
+              data={this.state.laps}
+              renderItem={({item}) => <Text>{item.time}</Text>}
+            />
           </View>
           <Text style={{color: '#fff', fontSize: 15}}>Made in China.</Text>
         </View>
