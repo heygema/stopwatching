@@ -104,6 +104,7 @@ class App extends Component<Props, State> {
   _restartLap = () => {
     this.setState({
       laps: [],
+      currentTime: 0,
     });
   };
 
