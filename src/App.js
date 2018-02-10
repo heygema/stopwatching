@@ -296,7 +296,7 @@ class App extends Component<Props, State> {
             <FlatList
               data={this.state.laps}
               renderItem={({item}) => (
-                <View>
+                <View key={item.id}>
                   <Text
                     style={{
                       fontFamily: fontLoaded ? 'open-sans' : null,

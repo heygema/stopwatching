@@ -33,7 +33,7 @@
     "flowtype/type-id-match": [1, "^[A-Z]"],
     // generic rules
     "no-cond-assign": 1, // disallow assignment in conditional expressions
-    "no-console": 0, // disallow use of console
+    "no-console": 1, // disallow use of console
     "no-constant-condition": 1, // disallow use of constant expressions in conditions
     "comma-dangle": [
       1,
